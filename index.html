@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find Your Seat</title>
+<style>
+  :root {
+    --bg: #fbf0c4;          /* butter yellow */
+    --card: #fffdf5;
+    --ink: #3c4a57;         /* deep dusty blue ink */
+    --muted: #7d93a6;
+    --accent: #8da9c4;      /* dusty blue */
+    --accent-dark: #6e8ca0;
+    --line: #e6dcb4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+  header { text-align: center; margin-bottom: 32px; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 3px; font-size: 12px;
+    color: var(--accent); margin: 0 0 8px;
+  }
+  h1 { font-size: 34px; font-weight: 600; margin: 0 0 6px; }
+  .sub { color: var(--muted); margin: 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 24px; box-shadow: 0 6px 24px rgba(60,44,20,0.06);
+  }
+  label { display: block; font-weight: 600; margin-bottom: 8px; }
+  .search-row { position: relative; }
+  input[type="search"] {
+    width: 100%; padding: 14px 16px; font-size: 17px;
+    border: 1px solid var(--line); border-radius: 10px; outline: none;
+    background: #fffdfa;
+  }
+  input[type="search"]:focus { border-color: var(--accent); }
+  #results { margin-top: 18px; }
+  .result {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 14px 16px; border: 1px solid var(--line);
+    border-radius: 10px; margin-bottom: 10px; background: #fffdfa;
+  }
+  .result .who { font-weight: 600; }
+  .badge {
+    flex: none; background: var(--accent); color: #fff; font-weight: 700;
+    border-radius: 999px; padding: 8px 16px; font-size: 15px; white-space: nowrap;
+  }
+  .hint, .empty { color: var(--muted); padding: 6px 2px; }
+  .empty strong { color: var(--ink); }
+  section.floor { margin-top: 40px; }
+  section.floor h2 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
+  .floorplan {
+    width: 100%; border-radius: 14px; border: 1px solid var(--line);
+    display: block; background: #fff;
+  }
+  .placeholder {
+    width: 100%; aspect-ratio: 4 / 3; border-radius: 14px;
+    border: 2px dashed var(--line); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px;
+    color: var(--muted); background:
+      repeating-linear-gradient(45deg, #fdf6d6, #fdf6d6 14px, #f6ecbe 14px, #f6ecbe 28px);
+    text-align: center; padding: 20px;
+  }
+  .placeholder .big { font-size: 18px; font-weight: 600; color: var(--ink); }
+  footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 40px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">Wedding Reception</p>
+      <h1>Find Your Seat</h1>
+      <p class="sub">Start typing your name to find your table.</p>
+    </header>
+
+    <div class="card">
+      <label for="q">Your name</label>
+      <div class="search-row">
+        <input id="q" type="search" placeholder="e.g. Terry Chiang" autocomplete="off" autofocus>
+      </div>
+      <div id="results"><p class="hint">157 guests seated &mdash; type to search.</p></div>
+    </div>
+
+    <section class="floor">
+      <h2>Venue Floorplan</h2>
+      <img id="floorplan" class="floorplan" alt="Venue floorplan" style="display:none">
+      <div id="placeholder" class="placeholder">
+        <span class="big">Floorplan coming soon</span>
+        <span>Replace this by adding <code>floorplan.jpg</code> or <code>floorplan.png</code> next to this page.</span>
+      </div>
+    </section>
+
+    <footer>With love &mdash; please find your table and enjoy the evening.</footer>
+  </div>
+
+<script>
+  const GUESTS = [{"table": "1", "name": "Terry Chiang"}, {"table": "2", "name": "Tao-Chang Chiang"}, {"table": "3", "name": "Xinyi Yang"}, {"table": "4", "name": "Eric Wu"}, {"table": "5", "name": "Fang Mei"}, {"table": "6", "name": "Mendy Yeung"}, {"table": "7", "name": "Joseph Lih"}, {"table": "8", "name": "Zhien Wang"}, {"table": "9", "name": "Emily Ma"}, {"table": "10", "name": "Sam Lu"}, {"table": "11", "name": "Ann Lih"}, {"table": "12", "name": "Kevin Liang"}, {"table": "13", "name": "Angela Li"}, {"table": "14", "name": "Dilin Lu"}, {"table": "15", "name": "William Wu"}, {"table": "16", "name": "Benjamin Chiou"}, {"table": "1", "name": "Roxane Chiang"}, {"table": "2", "name": "Fan-Chi Chiang"}, {"table": "3", "name": "Wenxue Han"}, {"table": "4", "name": "Justine Sun"}, {"table": "5", "name": "Qinghong Zhang"}, {"table": "6", "name": "Normond Yeung"}, {"table": "7", "name": "Ruby Lih"}, {"table": "8", "name": "Xinrui Zhao"}, {"table": "9", "name": "Garrett Warren"}, {"table": "10", "name": "Luna Liu"}, {"table": "11", "name": "Kevin Lei"}, {"table": "12", "name": "Marissa Kuo"}, {"table": "13", "name": "Austin Wong"}, {"table": "14", "name": "Kasey Chen"}, {"table": "15", "name": "Sarah Wu"}, {"table": "16", "name": "Ruth Chiou"}, {"table": "1", "name": "Shuming Lin"}, {"table": "2", "name": "Wendy Chen"}, {"table": "3", "name": "Xudong Zheng"}, {"table": "4", "name": "James Yang"}, {"table": "5", "name": "Kenneth Ng"}, {"table": "6", "name": "Stephen Chan"}, {"table": "7", "name": "Christopher Chiang"}, {"table": "8", "name": "Tony Shen"}, {"table": "9", "name": "Lydia Ho"}, {"table": "10", "name": "Cissie Wang"}, {"table": "11", "name": "Edward Cheng"}, {"table": "12", "name": "Kevin Ren"}, {"table": "13", "name": "Cheng Chen"}, {"table": "14", "name": "Yifan Wei"}, {"table": "15", "name": "Irene Wu"}, {"table": "16", "name": "Erin Chiou"}, {"table": "1", "name": "Lixin Chen"}, {"table": "2", "name": "Edwin Chen"}, {"table": "3", "name": "Huizhen Lin"}, {"table": "4", "name": "Kathy Quach"}, {"table": "5", "name": "Hanna Ng"}, {"table": "6", "name": "Florence Chan"}, {"table": "7", "name": "Cheng Chiang"}, {"table": "8", "name": "Cathy Lee"}, {"table": "9", "name": "Madeline Wu"}, {"table": "10", "name": "Emily Zhang"}, {"table": "11", "name": "Alex Qian"}, {"table": "12", "name": "Joshua Yuan"}, {"table": "13", "name": "Johnny Dong"}, {"table": "14", "name": "Yuqing Zhang"}, {"table": "15", "name": "Thomas Lee"}, {"table": "16", "name": "Hazel Chiou"}, {"table": "1", "name": "Luke Tsai"}, {"table": "2", "name": "Wesley Chen"}, {"table": "3", "name": "Zhiqun Qian"}, {"table": "4", "name": "Jason Ni"}, {"table": "5", "name": "Kevin Kuan"}, {"table": "6", "name": "David Kung"}, {"table": "7", "name": "Stacy Wang"}, {"table": "8", "name": "Wenmin He"}, {"table": "9", "name": "Christina Tian"}, {"table": "10", "name": "Ziwen Pang"}, {"table": "11", "name": "Dorothy Tsai"}, {"table": "12", "name": "Jonathan Yuan"}, {"table": "13", "name": "Zhuo Wang"}, {"table": "14", "name": "Victor Huang"}, {"table": "15", "name": "Wanqing Wen"}, {"table": "16", "name": "Thomas Chang"}, {"table": "1", "name": "Jackie Tsai"}, {"table": "2", "name": "Kelly Lee"}, {"table": "3", "name": "Nili Luo"}, {"table": "4", "name": "Christine Villamarin"}, {"table": "5", "name": "Wendy Lien"}, {"table": "6", "name": "Johanna Kung"}, {"table": "7", "name": "Austin Wang"}, {"table": "8", "name": "Yuxin He"}, {"table": "9", "name": "Paul Wat"}, {"table": "10", "name": "Meixin Hou"}, {"table": "11", "name": "Carissa Lee"}, {"table": "12", "name": "Julisia Chau"}, {"table": "13", "name": "Amy Zhang"}, {"table": "14", "name": "Tong Na"}, {"table": "15", "name": "Aston Lee"}, {"table": "16", "name": "Zhiqi Zhang"}, {"table": "1", "name": "Tristan Meng"}, {"table": "2", "name": "Eileen Lee"}, {"table": "3", "name": "Harry Lee"}, {"table": "4", "name": "Jeffrey Ge"}, {"table": "5", "name": "David Yuan"}, {"table": "6", "name": "Luke Chen"}, {"table": "7", "name": "Austin Lee"}, {"table": "8", "name": "Zihan Yuan"}, {"table": "9", "name": "Gabriel Chen"}, {"table": "10", "name": "Leo Zhang"}, {"table": "11", "name": "Ashley Yeung"}, {"table": "12", "name": "Davina Liu"}, {"table": "13", "name": "Abdulla Askar"}, {"table": "14", "name": "Lei Ding"}, {"table": "15", "name": "Ethan Lee"}, {"table": "16", "name": "Qingjie Liu"}, {"table": "1", "name": "Jessica Deng"}, {"table": "2", "name": "Gene Lee"}, {"table": "3", "name": "Olivia Lee"}, {"table": "4", "name": "Matthew Young"}, {"table": "5", "name": "Janet Yuan"}, {"table": "6", "name": "Phoebe Chen"}, {"table": "7", "name": "Nikki Odon"}, {"table": "8", "name": "Christine Long"}, {"table": "9", "name": "Ean Chen"}, {"table": "11", "name": "Sabrina Yeung"}, {"table": "12", "name": "Joshua Li"}, {"table": "13", "name": "Ivy Dong"}, {"table": "14", "name": "Xiunan Qu"}, {"table": "15", "name": "Justin Hsu"}, {"table": "16", "name": "Ezra Zhang"}, {"table": "1", "name": "Eeding Lin"}, {"table": "2", "name": "Robin Chiang"}, {"table": "3", "name": "Sabrina Wu"}, {"table": "4", "name": "Marina Deguchi"}, {"table": "5", "name": "Lijun Ma"}, {"table": "6", "name": "James Chen"}, {"table": "9", "name": "Leona Chen"}, {"table": "12", "name": "Susannah Tsai"}, {"table": "15", "name": "Letitia Hsu"}, {"table": "1", "name": "Alex Wu"}, {"table": "2", "name": "Rachael Chiang"}, {"table": "3", "name": "Jason Lih"}, {"table": "4", "name": "Zachary Liu"}, {"table": "5", "name": "Xin Quan Ma"}, {"table": "6", "name": "Julie Chen"}, {"table": "9", "name": "Andrew Wong"}, {"table": "12", "name": "Victor Guan"}, {"table": "15", "name": "Zachary Hsu (2-3YO)"}, {"table": "1", "name": "Emily Wu"}, {"table": "2", "name": "Roland Chiang"}, {"table": "3", "name": "Sandra Lih"}, {"table": "4", "name": "Julia Nam"}, {"table": "6", "name": "Theresa Wang"}, {"table": "9", "name": "TJ Wong (3YO)"}, {"table": "12", "name": "Rosalie Chiang"}, {"table": "15", "name": "Hazel Hsu"}, {"table": "9", "name": "Anna Wong (1YO)"}, {"table": "12", "name": "Derek Liang"}, {"table": "15", "name": "Richard Wu"}, {"table": "15", "name": "Chloe Ding"}];
+
+  const q = document.getElementById("q");
+  const results = document.getElementById("results");
+  const total = GUESTS.length;
+
+  function norm(s) { return s.toLowerCase().replace(/\s+/g, " ").trim(); }
+
+  function render(query) {
+    const term = norm(query);
+    if (!term) {
+      results.innerHTML =
+        '<p class="hint">' + total + ' guests seated &mdash; type to search.</p>';
+      return;
+    }
+    const matches = GUESTS
+      .filter(g => norm(g.name).includes(term))
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .slice(0, 20);
+
+    if (matches.length === 0) {
+      results.innerHTML =
+        '<p class="empty">No match for <strong>' + escapeHtml(query) +
+        '</strong>. Try your first or last name, or ask the host.</p>';
+      return;
+    }
+    results.innerHTML = matches.map(g =>
+      '<div class="result"><span class="who">' + escapeHtml(g.name) +
+      '</span><span class="badge">Table ' + escapeHtml(g.table) + '</span></div>'
+    ).join("");
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => (
+      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+    ));
+  }
+
+  q.addEventListener("input", () => render(q.value));
+
+  // Use a real floorplan image if one is present; otherwise keep placeholder.
+  (function () {
+    const img = document.getElementById("floorplan");
+    const ph = document.getElementById("placeholder");
+    const candidates = ["floorplan.jpg", "floorplan.jpeg", "floorplan.png", "floorplan.webp"];
+    let i = 0;
+    function tryNext() {
+      if (i >= candidates.length) return;
+      const test = new Image();
+      test.onload = () => { img.src = candidates[i]; img.style.display = "block"; ph.style.display = "none"; };
+      test.onerror = () => { i++; tryNext(); };
+      test.src = candidates[i] + "?v=" + Date.now();
+    }
+    tryNext();
+  })();
+</script>
+</body>
+</html>
